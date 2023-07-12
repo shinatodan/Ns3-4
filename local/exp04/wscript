@@ -1,0 +1,10 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    obj = bld.create_ns3_program('exp04-TcpFlowMonitoring', 
+	['core', 'point-to-point', 'point-to-point-layout', 'applications', 'internet', 'flow-monitor'])
+    obj.source = 'exp04-TcpFlowMonitoring.cc'
+
+    obj = bld.create_ns3_program('exp04-UdpFlowMonitoring', 
+	['core', 'point-to-point', 'point-to-point-layout', 'applications', 'internet', 'flow-monitor'])
+    obj.source = 'exp04-UdpFlowMonitoring.cc'

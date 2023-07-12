@@ -1,0 +1,339 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * Copyright (c) 2007 University of Washington
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "ns3/log.h"
+#include "ns3/enum.h"
+#include "ns3/uinteger.h"
+#include "ns3/callback.h"
+#include "drr-queue.h"
+
+NS_LOG_COMPONENT_DEFINE ("DrrQueue");
+
+namespace ns3 {
+
+NS_OBJECT_ENSURE_REGISTERED (DrrQueue);
+
+TypeId DrrQueue::GetTypeId (void) 
+{
+  static TypeId tid = TypeId ("ns3::DrrQueue")
+    .SetParent<Queue> ()
+    .AddConstructor<DrrQueue> ()
+    .AddAttribute ("Mode", 
+                   "Whether to use bytes (see MaxBytes) or packets (see MaxPackets) as the maximum queue size metric.",
+                   EnumValue (QUEUE_MODE_PACKETS),
+                   MakeEnumAccessor (&DrrQueue::SetMode),
+                   MakeEnumChecker (QUEUE_MODE_BYTES, "QUEUE_MODE_BYTES",
+                                    QUEUE_MODE_PACKETS, "QUEUE_MODE_PACKETS"))
+    .AddAttribute ("MaxPackets", 
+                   "The maximum number of packets accepted by this DrrQueue.",
+                   UintegerValue (100),
+                   MakeUintegerAccessor (&DrrQueue::m_maxPackets),
+                   MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("MaxBytes", 
+                   "The maximum number of bytes accepted by this DrrQueue.",
+                   UintegerValue (100 * 65535),
+                   MakeUintegerAccessor (&DrrQueue::m_maxBytes),
+                   MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("NumFlows", 
+                   "The maximum number of flows(1-3).",
+                   UintegerValue (4),
+                   MakeUintegerAccessor (&DrrQueue::m_numflows),
+                   MakeUintegerChecker<uint32_t> ())
+    .AddAttribute ("Flow1_Source", 
+                   "The source of traffic flow1.(192.168.1.1)",
+                   StringValue ("192.168.1.1"),
+                   MakeStringAccessor (&DrrQueue::m_src1),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow1_Destination", 
+                   "The source of traffic flow1.(192.168.10.1)",
+                   StringValue ("192.168.10.1"),
+                   MakeStringAccessor (&DrrQueue::m_dst1),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow2_Source", 
+                   "The source of traffic flow1.(192.168.1.2)",
+                   StringValue ("192.168.1.2"),
+                   MakeStringAccessor (&DrrQueue::m_src2),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow2_Destination", 
+                   "The source of traffic flow1.(192.168.10.2)",
+                   StringValue ("192.168.10.2"),
+                   MakeStringAccessor (&DrrQueue::m_dst2),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow3_Source", 
+                   "The source of traffic flow1.(192.168.1.3)",
+                   StringValue ("192.168.1.3"),
+                   MakeStringAccessor (&DrrQueue::m_src3),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow3_Destination", 
+                   "The source of traffic flow3.(192.168.10.3)",
+                   StringValue ("192.168.10.3"),
+                   MakeStringAccessor (&DrrQueue::m_dst3),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow4_Source", 
+                   "The source of traffic flow1.(192.168.1.3)",
+                   StringValue ("192.168.1.4"),
+                   MakeStringAccessor (&DrrQueue::m_src4),
+                   MakeStringChecker ())
+    .AddAttribute ("Flow4_Destination", 
+                   "The source of traffic flow3.(192.168.10.4)",
+                   StringValue ("192.168.10.3"),
+                   MakeStringAccessor (&DrrQueue::m_dst4),
+                   MakeStringChecker ())
+  ;
+
+  return tid;
+}
+
+DrrQueue::DrrQueue () :
+	Queue (),
+	m_packets (),
+	m_bytesInQueue (0),
+	m_hasDrrStarted(false),
+	m_turn (0)
+{
+	NS_LOG_FUNCTION (this);
+
+        // バーチャルキューの初期化(最大16本)
+	for(uint16_t i=0;i<16;i++)
+		m_bytesInVQueue[i] = 0;
+}
+
+DrrQueue::~DrrQueue ()
+{
+	NS_LOG_FUNCTION (this);
+}
+
+void
+DrrQueue::SetMode (DrrQueue::QueueMode mode)
+{
+	NS_LOG_FUNCTION (this << mode);
+	m_mode = mode;
+}
+
+DrrQueue::QueueMode
+DrrQueue::GetMode (void)
+{
+	NS_LOG_FUNCTION (this);
+	return m_mode;
+}
+
+void // Drrキュー初期化用関数
+DrrQueue::SetParameters ()
+{
+        NS_LOG_FUNCTION (this);
+
+        std::string key;
+        // マップ作成用キーを生成する
+        // キーは"192.168.1.1->192.168.2.1"のような文字列で表現される
+        switch (m_numflows) { 
+        case 4:
+                key = m_src4 + "->" + m_dst4;
+                m_flowMap.insert(std::make_pair(key, 3));
+                NS_LOG_DEBUG(key << " : 2");
+        case 3:
+                key = m_src3 + "->" + m_dst3;
+                m_flowMap.insert(std::make_pair(key, 2));
+                NS_LOG_DEBUG(key << " : 2");
+
+        case 2:
+                key = m_src2 + "->" + m_dst2;
+                m_flowMap.insert(std::make_pair(key, 1));
+                NS_LOG_DEBUG(key << " : 1");
+        case 1:
+                key = m_src1 + "->" + m_dst1;
+                m_flowMap.insert(std::make_pair(key, 0));
+                NS_LOG_DEBUG(key << " : 0");
+        }
+
+}
+
+#include <stdio.h>
+void // パケットバッファーを出力用関数(IPヘッダ部だけ)
+DrrQueue::dumpPacketBuffer (Ptr<Packet> p)
+{
+        // 受信したパケットのPyload部をbufferにコピーしておく
+        uint8_t *buffer = new uint8_t [p->GetSize()];
+        p->CopyData(buffer, p->GetSize());
+
+        // 3バイト目～23バイト目まではIPヘッダ部(オプション部無視)
+        char   ver[3]; sprintf(  ver, "%d", (buffer[2]&0xf0)>>4);
+        char hsize[3]; sprintf(hsize, "%d", buffer[2]&0x0f);
+        char   tos[5]; sprintf(  tos, "0x%02x", buffer[3]);
+        char  size[8]; sprintf( size, "%d", ((buffer[4]&0x1f)<<8)|buffer[5]);
+        char    id[8]; sprintf(   id, "%d",(buffer[6]<<8)|buffer[7]);
+        char  flag[3]; sprintf( flag, "0x%02x",(buffer[8]&0xe0)>>5);
+        char   seg[8]; sprintf(  seg, "%d",((buffer[8]&0x1f)<<8)|buffer[9]);
+        char   ttl[6]; sprintf(  ttl, "%d", buffer[10]);
+        char proto[6]; sprintf(proto, "%d", buffer[11]);
+        char  csum[8]; sprintf( csum, "0x%04x", ((buffer[12]&0x1f)<<8)|buffer[13]);
+        char  src[16]; sprintf(  src, "%d.%d.%d.%d", buffer[14],buffer[15],buffer[16],buffer[17]);
+        char  dst[16]; sprintf(  dst, "%d.%d.%d.%d", buffer[18],buffer[19],buffer[20],buffer[21]);
+
+        NS_LOG_UNCOND("version:" << ver 
+                << " hsize:" << hsize 
+                << " Tos:" << tos 
+                << " psize:" << size
+                << " id:" << id
+                << " flag:" << flag
+                << " seg:" << seg
+                << " ttl:" << ttl
+                << " proto:" << proto
+                << " csum:" << csum
+        );
+        //NS_LOG_UNCOND("src address:" << src << " des address:" << dst);
+}
+
+std::string // フローのピアIPアドレスからキーを生成する関数
+DrrQueue::getIPAddressFromPacket(Ptr<Packet> p)
+{
+	uint8_t *buffer = new uint8_t [p->GetSize()];
+	p->CopyData(buffer, p->GetSize());
+	char src[16]; sprintf(src, "%d.%d.%d.%d", buffer[14],buffer[15],buffer[16],buffer[17]);
+	char dst[16]; sprintf(dst, "%d.%d.%d.%d", buffer[18],buffer[19],buffer[20],buffer[21]);
+	std::string key = std::string(src) + "->" + std::string(dst);
+	return key;
+}
+
+bool // エンキュー処理関数
+DrrQueue::DoEnqueue (Ptr<Packet> p)
+{
+	uint16_t idx = 0; // キューインデクス
+
+	NS_LOG_FUNCTION (this << p);
+
+        // Drrキューをスタートしたときパラメータ類を初期化する
+	if (!m_hasDrrStarted ) {
+		NS_LOG_INFO ("Initializing DRR params.");
+		SetParameters ();
+		m_hasDrrStarted = true;
+	}
+
+	//dumpPacketBuffer (p);
+
+	// MAPより該当フローのキューインデクスを取得する。登録済みフローのパケット以外のものを
+        // m_numflows番目のキュー(BEキュー)に入れておく
+	std::map<std::string, uint16_t>::iterator it;
+	std::string key = getIPAddressFromPacket(p);
+	//NS_LOG_UNCOND(key);
+	it = m_flowMap.find(key);
+	if(it != m_flowMap.end()) {
+                //std::cout << "flow:" << it->first << " \t flow ID: " << it->second << std::endl;
+		idx = it->second;
+	} else {
+		//NS_LOG_UNCOND(key << " \t (best effort flow)");
+		idx = m_numflows;// for BE queue
+	}
+	
+        // キュー溢れの処理(パケット単位)
+	if (m_mode == QUEUE_MODE_PACKETS && (m_vqueue[idx].size () >= m_maxPackets)) {
+		NS_LOG_LOGIC ("Queue full (at max packets) -- droppping pkt");
+		Drop (p);
+		return false;
+	}
+
+        // キュー溢れの処理(バイト単位)
+	if (m_mode == QUEUE_MODE_BYTES && (m_bytesInVQueue[idx] + p->GetSize () >= m_maxBytes)) {
+		NS_LOG_LOGIC ("Queue full (packet would exceed max bytes) -- droppping pkt");
+		Drop (p);
+		return false;
+	}
+
+        // エンキュー処理(キューサイズの計算、キューに挿入)
+	m_bytesInVQueue[idx] += p->GetSize ();
+	m_vqueue[idx].push (p);
+
+	NS_LOG_UNCOND(key << " enqueue:" << idx << " vqueue size:" << m_vqueue[idx].size ());
+
+	NS_LOG_LOGIC ("Number packets " << m_vqueue[idx].size ());
+	NS_LOG_LOGIC ("Number bytes " << m_bytesInVQueue[idx]);
+
+	return true;
+}
+
+uint16_t // 物理キューサイズの取得関数
+DrrQueue::getPhyQueueSize (void)
+{
+        int qsize=0;
+        for(uint32_t i=0;i<=m_numflows;i++)
+                qsize += m_vqueue[i].size();
+        return qsize;
+}
+
+Ptr<Packet> // デキュー処理関数(ラウンドロビン法)
+DrrQueue::DoDequeue (void)
+{
+	NS_LOG_FUNCTION (this);
+
+	//NS_LOG_UNCOND("phyQueue size:" << getPhyQueueSize() << " turn:" << m_turn);
+
+        // 物理キューのサイズが0であれば、処理終了。
+	if (getPhyQueueSize () == 0) {
+		NS_LOG_LOGIC ("Queue empty");
+		return 0;
+	}
+
+        // m_turn番目のキューから送出する
+	Ptr<Packet> p = m_vqueue[m_turn].front ();
+	if(p != 0) {
+		m_vqueue[m_turn].pop ();
+		m_bytesInVQueue[m_turn] -= p->GetSize ();
+	}
+
+        // もしm_turn番目のキューにパケットがなければ、次のキューを決定して送出する
+	while (p==0 && getPhyQueueSize() > 0) {
+                m_turn = (m_turn + 1) % (m_numflows+1);
+                p = m_vqueue[m_turn].front ();
+		if(p != 0) {
+                	m_vqueue[m_turn].pop ();
+                	m_bytesInVQueue[m_turn] -= p->GetSize ();
+		}
+        } 
+
+        // 次の送出する順番を決める
+	if(p != 0) {
+                m_turn = (m_turn + 1) % (m_numflows+1);
+        }
+
+	NS_LOG_LOGIC ("Popped " << p);
+
+//	NS_LOG_LOGIC ("Number packets " << m_packets.size ());
+//	NS_LOG_LOGIC ("Number bytes " << m_bytesInVQueue);
+
+	return p;
+}
+
+Ptr<const Packet>
+DrrQueue::DoPeek (void) const
+{
+	NS_LOG_FUNCTION (this);
+
+	if (m_packets.empty ()) {
+		NS_LOG_LOGIC ("Queue empty");
+		return 0;
+	}
+
+	Ptr<Packet> p = m_packets.front ();
+
+	NS_LOG_LOGIC ("Number packets " << m_packets.size ());
+	NS_LOG_LOGIC ("Number bytes " << m_bytesInQueue);
+
+	return p;
+}
+
+} // namespace ns3
+

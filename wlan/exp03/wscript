@@ -1,0 +1,7 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    obj = bld.create_ns3_program('exp03-infraTCP', 
+	['netanim', 'core', 'mobility', 'wifi','aodv', 'olsr', 'csma', 
+		'point-to-point', 'applications', 'internet', 'flow-monitor'])
+    obj.source = 'exp03-infraTCP.cc'

@@ -1,0 +1,14 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    obj = bld.create_ns3_program('exp02-BulkTCP-with-cwnd-trace', 
+		['core', 'point-to-point-layout', 'point-to-point', 'applications', 'internet'])
+    obj.source = 'exp02-BulkTCP-with-cwnd-trace.cc'
+
+    obj = bld.create_ns3_program('exp02-OnOffTCP-with-cwnd-trace', 
+		['core', 'point-to-point-layout', 'point-to-point', 'applications', 'internet'])
+    obj.source = 'exp02-OnOffTCP-with-cwnd-trace.cc'
+
+    obj = bld.create_ns3_program('exp02-studyA', 
+		['core', 'point-to-point-layout', 'point-to-point', 'applications', 'internet'])
+    obj.source = 'exp02-studyA.cc'

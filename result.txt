@@ -1,0 +1,703 @@
+Waf: Entering directory `/home/hry-user/ns-allinone-3.26/ns-3.26/build'
+[1522/2075] Compiling src/gpsr/model/gpsr-ptable.cc
+[1524/2075] Compiling src/gpsr/model/gpsr.cc
+[1987/2075] Linking build/libns3.26-gpsr-debug.so
+[1991/2075] Linking build/bindings/python/ns/lr_wpan.so
+[1991/2075] Linking build/scratch/kota-flow
+[1992/2075] Linking build/bindings/python/ns/virtual_net_device.so
+[1993/2075] Linking build/nishioka/conf-igpsr
+[1994/2075] Linking build/bindings/python/ns/buildings.so
+[1995/2075] Linking build/bindings/python/ns/point_to_point.so
+[1996/2075] Linking build/bindings/python/ns/_core.so
+[1997/2075] Linking build/bindings/python/ns/flow_monitor.so
+[1998/2075] Linking build/bindings/python/ns/topology_read.so
+[1999/2075] Linking build/bindings/python/ns/mobility.so
+[2000/2075] Linking build/nishioka/Scenario1
+[2001/2075] Linking build/bindings/python/ns/csma.so
+[2002/2075] Linking build/nishioka/university-flow
+[2003/2075] Linking build/bindings/python/ns/nix_vector_routing.so
+[2004/2075] Linking build/scratch/ns2-mobility-trace
+[2005/2075] Linking build/nishioka/vanet-routing-compare
+[2006/2075] Linking build/bindings/python/ns/wave.so
+[2007/2075] Linking build/nishioka/Simulation
+[2008/2075] Linking build/bindings/python/ns/fd_net_device.so
+[2009/2075] Linking build/bindings/python/ns/point_to_point_layout.so
+[2010/2075] Linking build/nishioka/station-flow
+[2011/2075] Linking build/bindings/python/ns/olsr.so
+[2012/2075] Linking build/nishioka/university
+[2013/2075] Linking build/bindings/python/ns/tap_bridge.so
+[2014/2075] Linking build/bindings/python/ns/sixlowpan.so
+[2015/2075] Linking build/nishioka/vanet-compare
+[2016/2075] Linking build/bindings/python/ns/wifi.so
+[2017/2075] Linking build/nishioka/Drawn
+[2018/2075] Linking build/scratch/grid-animation
+[2019/2075] Linking build/nishioka/Preexp
+[2020/2075] Linking build/scratch/dumbbell-animation
+[2021/2075] Linking build/bindings/python/ns/antenna.so
+[2022/2075] Linking build/nishioka/Scenario3
+[2023/2075] Linking build/nishioka/lgpsr-test3
+[2024/2075] Linking build/utils/ns3.26-test-runner-debug
+[2025/2075] Linking build/nishioka/simexp2
+[2026/2075] Linking build/bindings/python/ns/propagation.so
+[2027/2075] Linking build/bindings/python/ns/applications.so
+[2028/2075] Linking build/bindings/python/ns/uan.so
+[2029/2075] Linking build/nishioka/Scenario2
+[2030/2075] Linking build/bindings/python/ns/dsdv.so
+[2031/2075] Linking build/bindings/python/ns/lte.so
+[2032/2075] Linking build/bindings/python/ns/internet_apps.so
+[2033/2075] Linking build/bindings/python/ns/energy.so
+[2034/2075] Linking build/scratch/subdir/subdir
+[2035/2075] Linking build/bindings/python/ns/traffic_control.so
+[2036/2075] Linking build/scratch/station2
+[2037/2075] Linking build/scratch/wireless-animation
+[2038/2075] Linking build/bindings/python/ns/spectrum.so
+[2039/2075] Linking build/nishioka/station
+[2040/2075] Linking build/nishioka/ScenarioA
+[2041/2075] Linking build/utils/ns3.26-print-introspected-doxygen-debug
+[2042/2075] Linking build/bindings/python/ns/config_store.so
+[2043/2075] Linking build/bindings/python/ns/mesh.so
+[2044/2075] Linking build/nishioka/Simexp
+[2045/2075] Linking build/nishioka/lgpsr-test1
+[2046/2075] Linking build/nishioka/exp02-simpleAdhoc
+[2047/2075] Linking build/bindings/python/ns/csma_layout.so
+[2048/2075] Linking build/scratch/sumo-example
+[2049/2075] Linking build/bindings/python/ns/wimax.so
+[2050/2075] Linking build/scratch/hani
+[2051/2075] Linking build/bindings/python/ns/visualizer.so
+[2052/2075] Linking build/nishioka/pgpsr-test1
+[2053/2075] Linking build/bindings/python/ns/stats.so
+[2054/2075] Linking build/nishioka/simexp
+[2055/2075] Linking build/bindings/python/ns/dsr.so
+[2056/2075] Linking build/bindings/python/ns/internet.so
+[2057/2075] Linking build/nishioka/drawnwlan
+[2058/2075] Linking build/bindings/python/ns/bridge.so
+[2059/2075] Linking build/bindings/python/ns/aodv.so
+[2060/2075] Linking build/nishioka/main-random-walk
+[2061/2075] Linking build/nishioka/pgpsr-test2
+[2062/2075] Linking build/scratch/sumo-gifu
+[2063/2075] Linking build/bindings/python/ns/mpi.so
+[2064/2075] Linking build/bindings/python/ns/network.so
+Waf: Leaving directory `/home/hry-user/ns-allinone-3.26/ns-3.26/build'
+Build commands will be stored in build/compile_commands.json
+'build' finished successfully (20.756s)
+ノード番号(packet)3
+ノード番号(packet)2
+ノード番号(packet)0
+ノード番号(packet)1
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)0
+0:200:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)2
+125:325:0
+125:325:0
+ノード番号(packet)3
+250:200:0
+ノード番号(packet)1
+125:75:0
+125:75:0
+スループット(kbps)0
+配送率0
+オーバーヘッド割合28.8967
+平均遅延(ms)0
+パケットロス率81.0345
+平均ホップ数0
+フロー数1
+オーバーヘッドも含めた送信バイト合計90218
+
+データパケット----------------------
+送信バイト合計:64148
+受信バイト合計:0
+ホップ数合計:0
+パケットロス合計47
+遅延合計0ms
+送信パケット数合計58
+受信パケット数合計0
+コントロールパケットポート番号666
+送信オーバーヘッド合計0

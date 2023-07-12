@@ -1,0 +1,73 @@
+実験６に関連するソースコードの修正手順
+
+1.  ns-3.19/src/mesh/model/dot11s/hwmp-protocol.[h,cc]をバックアップすること
+    % cd ns-3.19/src/mesh/model/dot11s/
+    % cp hwmp-protocol.h  hwmp-protocol.h-org
+    % cp hwmp-protocol.cc  hwmp-protocol.cc-org
+
+2. wlan/exp06/src-mesh-model-dot11s/hwmp-protocol.[h,cc]-diffを内容をns-3.19/src/mesh/model/dot11s/
+    の下のhwmp-protocol.[h,cc]に追加すること(第７章実験6関連）
+    % cd ~/ns-allinone-3.19/ns-3.19 /src/mesh/model/dot11s/
+    % vi hwmp-protocol.h
+        第89行(void ResetStats (); の後)のあたりに以下の内容(hwmp-protocol.h-diff)を追加する
+        //F.Qian or Your Name
+       void ReportRtables (std::ostream &, uint32_t) const;
+
+    % vi hwmp-protocol.cc
+        第1189行(最後から前へ3行目、「} // namespace dot11s」の前)のあたりに以下の内容(hwmp-protocol.cc-diff)を追加する
+        // F.Qian or Your Name
+        // dump reactive routing table
+	#include <stdio.h>
+	void
+	HwmpProtocol::ReportRtables (std::ostream & os, uint32_t num) const
+	{
+	  os << "---------------------------------------------------------\n";
+	  os << "HWMP Routing Table for node : " << m_address
+	     << " at " << Simulator::Now ().GetSeconds () << std::endl;
+	  os << "       dst \t  interface ID   Next hop's MAC Address" << std::endl;
+
+	  char mac[20];
+	  for(uint16_t i=1; i<num; i++) {
+	      sprintf(mac,"00:00:00:00:00:0%x",i);
+	      os << mac << "\t";
+	      HwmpRtable::PrecursorList list = m_rtable->GetPrecursors (Mac48Address(mac));
+	      if(list.size () == 0) {
+	          os << "- \t -" << std::endl;
+	          continue;
+	      }
+	      for (uint16_t i = 0; i < list.size (); i++) {
+	          os << list[i].first << " \t " << list[i].second << std::endl;
+	          if(list.size () > 1 && i < list.size ()-1)
+	                os << "\t\t\t";
+	      }
+	  }
+	}
+
+3. wlan/exp06/src-mesh-helper/mesh-radio-energy-model-helper.[h,cc]をns-3.19/src/mesh/helper/
+    の下にコピーすること(第8章「開発事例1」関連）
+    % cd ~/ns-allinone-3.19/ns-3.19
+    % cp wlan/exp06/src-mesh-helper/mesh-radio-energy-model-helper.h  src/mesh/helper/.
+    % cp wlan/exp06/src-mesh-helper/mesh-radio-energy-model-helper.cc  src/mesh/helper/.
+
+4. ns-3.19/src/mesh/wscriptを修正する(第8章「開発事例1」関連）
+    第4行のobj = bld.create_ns3_moduleのモジュールリストに'energy'を追加
+    obj = bld.create_ns3_module('mesh', ['internet', 'wifi', 'bridge', 'applications', 'energy'])
+
+    obj.sourceのソースリスト(第39行のあたり)にmesh-radio-energy-model-helper.ccを追加する
+    obj.source = [
+	...
+	'helper/flame/flame-installer.cc',
+	'helper/mesh-radio-energy-model-helper.cc'   # appended by F.Qian or Your Name
+    ]
+
+    headers.sourceソースリスト(第91行のあたり)にmesh-radio-energy-model-helper.hを追加する
+    headers.source = [
+	...
+	'helper/flame/flame-installer.h',
+	'helper/mesh-radio-energy-model-helper.h'   # appended by F.Qian or Your Name
+    ]
+
+5. 新しいmジュールをns3に組み込む
+    % cd ~/ns-allinone-3.19/ns-3.19
+    % ./waf
+

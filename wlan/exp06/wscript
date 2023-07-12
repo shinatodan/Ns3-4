@@ -1,0 +1,14 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    obj = bld.create_ns3_program('exp06-simpleMesh', 
+	['config-store', 'netanim', 'core', 'mobility', 'wifi','csma', 'olsr', 'mesh', 
+		'point-to-point', 'applications', 'internet', 'flow-monitor'])
+    obj.source = 'exp06-simpleMesh.cc simpleMeshLib.cc'
+
+#    obj = bld.create_ns3_program('exp06-simpleMesh-with-energy', 
+#	['config-store', 'netanim', 'core', 'mobility', 'wifi','csma', 'olsr', 'mesh', 
+#		'point-to-point', 'applications', 'internet', 'flow-monitor'])
+#    obj.source = 'exp06-simpleMesh-with-energy.cc simpleMeshTest.cc'
+
+

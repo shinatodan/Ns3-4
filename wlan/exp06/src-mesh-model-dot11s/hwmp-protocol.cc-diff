@@ -1,0 +1,27 @@
+// F.Qian
+// dump reactive routing table
+#include <stdio.h>
+void
+HwmpProtocol::ReportRtables (std::ostream & os, uint32_t num) const
+{
+  os << "---------------------------------------------------------\n";
+  os << "HWMP Routing Table for node : " << m_address 
+     << " at " << Simulator::Now ().GetSeconds () << std::endl;
+  os << "       dst \t  interface ID   Next hop's MAC Address" << std::endl;
+
+  char mac[20];
+  for(uint16_t i=1; i<num; i++) {
+      sprintf(mac,"00:00:00:00:00:0%x",i);
+      os << mac << "\t";
+      HwmpRtable::PrecursorList list = m_rtable->GetPrecursors (Mac48Address(mac));
+      if(list.size () == 0) {
+	  os << "- \t -" << std::endl;
+	  continue;
+      }
+      for (uint16_t i = 0; i < list.size (); i++) {
+	  os << list[i].first << " \t " << list[i].second << std::endl;
+	  if(list.size () > 1 && i < list.size ()-1)
+		os << "\t\t\t";
+      }
+  }
+}
