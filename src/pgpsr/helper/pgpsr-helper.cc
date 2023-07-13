@@ -25,6 +25,7 @@
 #include "ns3/node-container.h"
 #include "ns3/callback.h"
 #include "ns3/udp-l4-protocol.h"
+#include <openssl/ec.h>
 
 
 namespace ns3 {
@@ -57,6 +58,9 @@ PGpsrHelper::Set (std::string name, const AttributeValue &value)
 {
   m_agentFactory.Set (name, value);
 }
+
+//shinato
+
 
 
 void

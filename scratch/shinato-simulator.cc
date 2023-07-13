@@ -27,6 +27,8 @@
 #include <openssl/dsa.h>
 #include <openssl/err.h>
 #include <openssl/sha.h>
+#include <openssl/ec.h>
+#include <openssl/evp.h>
 
 using namespace ns3;
 
@@ -165,6 +167,7 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   Ipv4ListRoutingHelper list;
   InternetStackHelper internet;
 
+  //DSA
   //鍵生成（IP)
   DSA* dsa_ip = DSA_new();
   if (dsa_ip == nullptr) {
@@ -186,6 +189,19 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   }
   if (DSA_generate_key(dsa_pos) != 1) {
       std::cerr << "Failed to generate DSA key pair" << std::endl;
+  }
+
+  //ECDSA
+  //鍵生成（IP)
+  EC_KEY* ecKey_ip = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
+  if (ecKey_ip == nullptr)
+  {
+    std::cerr << "Failed to create EC key" << std::endl;
+  }
+
+  if (EC_KEY_generate_key(ecKey_ip) != 1)//公開鍵、秘密鍵ペア生成
+  {
+    std::cerr << "Failed to generate EC key pair" << std::endl;
   }
 
   if(m_protocolName=="AODV"){
@@ -213,9 +229,24 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
     internet.Install(c);
   }
   else if(m_protocolName=="PGPSR"){
+
+    //pgpsr.SetDsaParameterIP(ecKey_ip);//IPアドレス署名用のパラメーター
+    //pgpsr.Settracefile(m_traceFile);
+
+    //署名生成（IP)
+    unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
+    SHA256(reinterpret_cast<const unsigned char*>(m_protocolName.c_str()), m_protocolName.length(), digest);
+    ECDSA_SIG* signature = ECDSA_do_sign(digest, SHA256_DIGEST_LENGTH, ecKey_ip);//署名生成
+    if (signature == nullptr)
+    {
+      std::cerr << "Failed to generate ECDSA signature" << std::endl;
+    }
+    //pgpsr.SetDsaSignatureIP(signature);
+
     list.Add (pgpsr, 100);
     internet.SetRoutingHelper (list);
     internet.Install(c);
+
   }
   else if(m_protocolName=="NGPSR"){//DSA署名付きのGPSR
     
