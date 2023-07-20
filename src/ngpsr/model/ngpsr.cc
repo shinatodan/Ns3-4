@@ -736,6 +736,7 @@ RoutingProtocol::RecvNGPSR (Ptr<Socket> socket)
         unsigned char digest[SHA256_DIGEST_LENGTH];//SHA256_DIGEST_LENGTHはSHA-256ハッシュのバイト長を表す定数
         SHA256(reinterpret_cast<const unsigned char*>(protocol.c_str()), protocol.length(), digest);//与えられたデータ（メッセージ）のハッシュ値を計算
 
+        //位置情報のハッシュ値計算
         unsigned char digest2[SHA256_DIGEST_LENGTH];//SHA256_DIGEST_LENGTHはSHA-256ハッシュのバイト長を表す定数
         SHA256(reinterpret_cast<const unsigned char*>(tracefile.c_str()), tracefile.length(), digest2);//与えられたデータ（メッセージ）のハッシュ値を計算
 
@@ -764,21 +765,20 @@ RoutingProtocol::RecvNGPSR (Ptr<Socket> socket)
 void
 RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos)
 {
-		uint32_t flag = 0;
+	uint32_t flag = 0;
 	
-		if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
-		{
-			flag = 1;
-		}
-		else if(sender==("192.168.1.29"))
-		{
-			flag = 2;
-		}
-		
-		else{
-			flag = 0;
-		}
-		m_neighbors.AddEntry (sender, Pos, flag);
+	if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
+	{
+		flag = 1;
+	}
+	else if(sender==("192.168.1.29"))
+	{
+		flag = 2;
+	}	
+	else{
+		flag = 0;
+	}
+	m_neighbors.AddEntry (sender, Pos, flag);
 }
 
 

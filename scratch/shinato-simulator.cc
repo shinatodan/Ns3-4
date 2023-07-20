@@ -192,7 +192,7 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   }
 
   //ECDSA
-  //鍵生成（IP)
+  /*//鍵生成（IP)
   EC_KEY* ecKey_ip = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
   if (ecKey_ip == nullptr)
   {
@@ -202,7 +202,7 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   if (EC_KEY_generate_key(ecKey_ip) != 1)//公開鍵、秘密鍵ペア生成
   {
     std::cerr << "Failed to generate EC key pair" << std::endl;
-  }
+  }*/
 
   if(m_protocolName=="AODV"){
     list.Add (aodv, 100);//aodvルーティングヘルパーとその優先度(100)を格納する
@@ -230,7 +230,7 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   }
   else if(m_protocolName=="PGPSR"){
 
-    //pgpsr.SetDsaParameterIP(ecKey_ip);//IPアドレス署名用のパラメーター
+    /*//pgpsr.SetDsaParameterIP(ecKey_ip);//IPアドレス署名用のパラメーター
     //pgpsr.Settracefile(m_traceFile);
 
     //署名生成（IP)
@@ -241,7 +241,7 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
     {
       std::cerr << "Failed to generate ECDSA signature" << std::endl;
     }
-    //pgpsr.SetDsaSignatureIP(signature);
+    //pgpsr.SetDsaSignatureIP(signature);*/
 
     list.Add (pgpsr, 100);
     internet.SetRoutingHelper (list);

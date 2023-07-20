@@ -708,26 +708,24 @@ RoutingProtocol::RecvPGPSR (Ptr<Socket> socket)
 
 }
 
-
+//shinato
 void
 RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos)
 {
-		//shinato
-		uint32_t flag = 0;
+	uint32_t flag = 0;
 	
-		if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
-		{
-			flag = 0;
-		}
-		else if(sender==("192.168.1.29"))
-		{
-			flag = 0;
-		}
-		
-		else{
-			flag = 0;
-		}
-		m_neighbors.AddEntry (sender, Pos, flag);
+	if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
+	{
+		flag = 0;
+	}
+	else if(sender==("192.168.1.29"))
+	{
+		flag = 0;
+	}
+	else{
+		flag = 0;
+	}
+	m_neighbors.AddEntry (sender, Pos, flag);
         
 }
 
@@ -910,27 +908,27 @@ RoutingProtocol::SendHello ()
         
 	for (std::map<Ptr<Socket>, Ipv4InterfaceAddress>::const_iterator j = m_socketAddresses.begin (); j != m_socketAddresses.end (); ++j)
 	{
-			Ptr<Socket> socket = j->first;
-			Ipv4InterfaceAddress iface = j->second;
-			HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY));
+		Ptr<Socket> socket = j->first;
+		Ipv4InterfaceAddress iface = j->second;
+		HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY));
 
-			Ptr<Packet> packet = Create<Packet> ();
-			packet->AddHeader (helloHeader);
-			TypeHeader tHeader (PGPSRTYPE_HELLO);
-			packet->AddHeader (tHeader);
-			//32アドレスの場合は全ホストのブロードキャストに送信、そうでない場合はサブネット経由で送信
-			Ipv4Address destination;
-			if (iface.GetMask () == Ipv4Mask::GetOnes ())
-			{
-					destination = Ipv4Address ("255.255.255.255");
-					NS_LOG_DEBUG("Send hello to destination"<<destination );
-			}
-			else
-			{
-					destination = iface.GetBroadcast ();
-					NS_LOG_DEBUG("Send hello to destination"<<destination );
-			}
-			socket->SendTo (packet, 0, InetSocketAddress (destination, PGPSR_PORT));
+		Ptr<Packet> packet = Create<Packet> ();
+		packet->AddHeader (helloHeader);
+		TypeHeader tHeader (PGPSRTYPE_HELLO);
+		packet->AddHeader (tHeader);
+		//32アドレスの場合は全ホストのブロードキャストに送信、そうでない場合はサブネット経由で送信
+		Ipv4Address destination;
+		if (iface.GetMask () == Ipv4Mask::GetOnes ())
+		{
+			destination = Ipv4Address ("255.255.255.255");
+			NS_LOG_DEBUG("Send hello to destination"<<destination );
+		}
+		else
+		{
+			destination = iface.GetBroadcast ();
+			NS_LOG_DEBUG("Send hello to destination"<<destination );
+		}
+		socket->SendTo (packet, 0, InetSocketAddress (destination, PGPSR_PORT));
 	}
 		
 }
