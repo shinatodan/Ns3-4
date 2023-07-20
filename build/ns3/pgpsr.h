@@ -28,6 +28,10 @@
 #include <map>
 #include <complex>
 
+#include <openssl/ec.h>
+#include <openssl/err.h>
+#include <openssl/sha.h>
+
 namespace ns3 {
 namespace pgpsr {
 /**
@@ -37,6 +41,8 @@ namespace pgpsr {
  */
 class RoutingProtocol : public Ipv4RoutingProtocol
 {
+  EC_KEY* ec_key;
+  ECDSA_SIG* m_dsaSignatureIP;
 public:
   static TypeId GetTypeId (void);
   static const uint32_t PGPSR_PORT;
@@ -65,6 +71,23 @@ public:
   virtual void UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver, Vector Pos);
   virtual void SendHello ();
   virtual bool IsMyOwnAddress (Ipv4Address src);
+
+  void SetDsaParameterIP(EC_KEY* parameter)
+  {
+    ec_key = parameter;
+  }
+  EC_KEY* GetDsaParameterIP() const
+  {
+    return ec_key;
+  }
+  void SetDsaSignatureIP(ECDSA_SIG* signature)
+  {
+    m_dsaSignatureIP = signature;
+  }
+  ECDSA_SIG* GetDsaSignatureIP() const
+  {
+      return m_dsaSignatureIP;
+  }
 
   Ptr<Ipv4> m_ipv4;
   /// 各インターフェースごとrawソケット, マップソケット -> iface address (IP + mask)

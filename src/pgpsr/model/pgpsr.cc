@@ -21,6 +21,11 @@
 #include "ns3/seq-ts-header.h"
 #include <string>
 
+#include <openssl/ec.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+#include <openssl/sha.h>
+
 
 #define PGPSR_LS_GOD 0
 
@@ -905,6 +910,29 @@ RoutingProtocol::SendHello ()
 
         positionX = MM->GetPosition ().x;
         positionY = MM->GetPosition ().y;
+
+        //shinato
+        //ECDSA
+        //ECキー生成
+        std::string protocolName = "PGPSR";
+        EC_KEY* ecKey = GetDsaParameterIP();
+        //署名生成
+        ECDSA_SIG* signature = GetDsaSignatureIP();
+        //ハッシュ値
+        unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
+        SHA256(reinterpret_cast<const unsigned char*>(protocolName.c_str()), protocolName.length(), digest);
+
+
+        //署名検証
+        if (ECDSA_do_verify(digest, SHA256_DIGEST_LENGTH, signature, ecKey) == 1)//署名検証　成功時１
+        {
+                std::cerr << "ECDSA signature verification succeeded" << std::endl;
+        }
+        else
+        {
+                std::cerr << "ECDSA signature verification failed" << std::endl;
+        }
+
         
 	for (std::map<Ptr<Socket>, Ipv4InterfaceAddress>::const_iterator j = m_socketAddresses.begin (); j != m_socketAddresses.end (); ++j)
 	{

@@ -50,6 +50,9 @@ PGpsrHelper::Create (Ptr<Node> node) const
   //pgpsr->SetDownTarget (ipv4l4->GetDownTarget ());
   //ipv4l4->SetDownTarget (MakeCallback (&pgpsr::RoutingProtocol::AddHeaders, pgpsr));
   node->AggregateObject (pgpsr);
+  //shinato
+  pgpsr->SetDsaParameterIP(m_dsaParameter); // m_dsaParameterの設定
+  pgpsr->SetDsaSignatureIP(m_dsaSignatureIP);
   return pgpsr;
 }
 
@@ -60,7 +63,20 @@ PGpsrHelper::Set (std::string name, const AttributeValue &value)
 }
 
 //shinato
-
+//shinato
+void PGpsrHelper::SetDsaParameterIP(EC_KEY* parameter) {
+    m_dsaParameter = parameter;
+}
+EC_KEY* PGpsrHelper::GetDsaParameterIP() const {
+    return m_dsaParameter;
+}
+void PGpsrHelper::SetDsaSignatureIP(ECDSA_SIG* signature)
+{
+    m_dsaSignatureIP = signature;
+}
+ECDSA_SIG* PGpsrHelper::GetDsaSignatureIP() const{
+    return m_dsaSignatureIP;
+}
 
 
 void

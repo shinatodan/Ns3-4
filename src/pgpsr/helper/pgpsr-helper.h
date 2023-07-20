@@ -24,6 +24,7 @@
 #include "ns3/node.h"
 #include "ns3/node-container.h"
 #include "ns3/ipv4-routing-helper.h"
+#include <openssl/ec.h>
 
 
 
@@ -63,10 +64,19 @@ public:
    */
   void Set (std::string name, const AttributeValue &value);
 
+  //shinato
+  //IP
+  void SetDsaParameterIP(EC_KEY* parameter);
+  EC_KEY* GetDsaParameterIP() const;
+  void SetDsaSignatureIP(ECDSA_SIG* signature);
+  ECDSA_SIG* GetDsaSignatureIP() const;
+
   void Install (void) const;
 
 private:
   ObjectFactory m_agentFactory;
+  EC_KEY* m_dsaParameter;
+  ECDSA_SIG* m_dsaSignatureIP;
 };
 
 }
