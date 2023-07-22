@@ -11,6 +11,10 @@
 #include "ns3/nstime.h"
 #include "ns3/vector.h"
 
+#include <openssl/ec.h>
+#include <openssl/err.h>
+#include <openssl/sha.h>
+
 namespace ns3 {
 namespace pgpsr {
 
@@ -64,7 +68,7 @@ class HelloHeader : public Header
 {
 public:
   /// c-tor
-  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0);
+  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0, ECDSA_SIG* signature = nullptr);
 
   ///\name Header serialization/deserialization
   //\{
@@ -94,6 +98,17 @@ public:
   {
     return m_originPosy;
   }
+  //shinato
+  void SetSignature (ECDSA_SIG* signature){
+    m_signature = signature;
+  }
+  ECDSA_SIG* GetSignature() const
+  {
+    return m_signature;
+  }
+
+
+
   //\}
 
 
@@ -101,6 +116,7 @@ public:
 private:
   uint64_t         m_originPosx;          ///< Originator Position x
   uint64_t         m_originPosy;          ///< Originator Position x
+  ECDSA_SIG* m_signature;
 };
 
 std::ostream & operator<< (std::ostream & os, HelloHeader const &);

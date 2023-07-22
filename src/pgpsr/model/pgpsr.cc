@@ -708,8 +708,26 @@ RoutingProtocol::RecvPGPSR (Ptr<Socket> socket)
         Ipv4Address sender = inetSourceAddr.GetIpv4 ();
         Ipv4Address receiver = m_socketAddresses[socket].GetLocal ();
         NS_LOG_DEBUG("update position"<<Position.x<<Position.y );
-        //近隣ノードの情報更新
-        UpdateRouteToNeighbor (sender, receiver, Position);
+        
+        //ECキー生成
+        std::string protocolName = "PGPSR";
+        EC_KEY* ecKey = GetDsaParameterIP();
+        //ハッシュ値
+        unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
+        SHA256(reinterpret_cast<const unsigned char*>(protocolName.c_str()), protocolName.length(), digest);
+        //署名検証
+        if (ECDSA_do_verify(digest, SHA256_DIGEST_LENGTH, hdr.GetSignature(), ecKey) == 1)//署名検証　成功時１
+        {
+                //std::cerr << "ECDSA signature verification succeeded" << std::endl;
+                //近隣ノードの情報更新
+                UpdateRouteToNeighbor (sender, receiver, Position);
+        }
+        else
+        {
+                std::cerr << "ECDSA signature verification failed" << std::endl;
+        }
+
+
 
 }
 
@@ -913,32 +931,16 @@ RoutingProtocol::SendHello ()
 
         //shinato
         //ECDSA
-        //ECキー生成
-        std::string protocolName = "PGPSR";
-        EC_KEY* ecKey = GetDsaParameterIP();
         //署名生成
         ECDSA_SIG* signature = GetDsaSignatureIP();
-        //ハッシュ値
-        unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
-        SHA256(reinterpret_cast<const unsigned char*>(protocolName.c_str()), protocolName.length(), digest);
-
-
-        //署名検証
-        if (ECDSA_do_verify(digest, SHA256_DIGEST_LENGTH, signature, ecKey) == 1)//署名検証　成功時１
-        {
-                std::cerr << "ECDSA signature verification succeeded" << std::endl;
-        }
-        else
-        {
-                std::cerr << "ECDSA signature verification failed" << std::endl;
-        }
+        
 
         
 	for (std::map<Ptr<Socket>, Ipv4InterfaceAddress>::const_iterator j = m_socketAddresses.begin (); j != m_socketAddresses.end (); ++j)
 	{
 		Ptr<Socket> socket = j->first;
 		Ipv4InterfaceAddress iface = j->second;
-		HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY));
+		HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), signature);
 
 		Ptr<Packet> packet = Create<Packet> ();
 		packet->AddHeader (helloHeader);

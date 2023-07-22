@@ -5,6 +5,10 @@
 #include "ns3/packet.h"
 #include "ns3/log.h"
 
+#include <openssl/ec.h>
+#include <openssl/err.h>
+#include <openssl/sha.h>
+
 NS_LOG_COMPONENT_DEFINE ("PGpsrPacket");
 
 namespace ns3 {
@@ -106,9 +110,10 @@ operator<< (std::ostream & os, TypeHeader const & h)
 //-----------------------------------------------------------------------------
 // HELLO
 //-----------------------------------------------------------------------------
-HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy)
+HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy, ECDSA_SIG* signature)
   : m_originPosx (originPosx),
-    m_originPosy (originPosy)
+    m_originPosy (originPosy),
+    m_signature (signature)
 {
 }
 
@@ -133,7 +138,14 @@ HelloHeader::GetInstanceTypeId () const
 uint32_t
 HelloHeader::GetSerializedSize () const
 {
-  return 16;
+  //追加
+  unsigned char *sig_ptr = NULL;
+  int sig_len_temp = i2d_ECDSA_SIG(m_signature, &sig_ptr);
+  uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
+  OPENSSL_free(sig_ptr);
+
+  return 16 + 4 + sig_len;
+  //return 16;
 }
 
 void
@@ -144,6 +156,20 @@ HelloHeader::Serialize (Buffer::Iterator i) const
 
   i.WriteHtonU64 (m_originPosx);
   i.WriteHtonU64 (m_originPosy);
+
+  //追加
+  unsigned char *sig_ptr = NULL;
+  int sig_len_temp = i2d_ECDSA_SIG(m_signature, &sig_ptr);
+
+  uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
+
+  // Write signature length and signature
+  i.WriteHtonU32 (sig_len);
+  for(uint32_t k = 0; k < sig_len; k++)
+  {
+      i.WriteU8 (static_cast<uint8_t>(sig_ptr[k]));
+  }
+  OPENSSL_free(sig_ptr);
 
 }
 
@@ -157,6 +183,19 @@ HelloHeader::Deserialize (Buffer::Iterator start)
   m_originPosy = i.ReadNtohU64 ();
 
   NS_LOG_DEBUG ("Deserialize X " << m_originPosx << " Y " << m_originPosy);
+
+  //追加
+  // Read signature length
+  uint32_t sig_len = i.ReadNtohU32 ();
+  // Read signature
+  unsigned char *sig_ptr = (unsigned char*) malloc(sig_len);
+  for(uint32_t k = 0; k < sig_len; k++)
+  {
+      sig_ptr[k] = static_cast<unsigned char>(i.ReadU8 ());
+  }
+  const unsigned char *sig_ptr_copy = sig_ptr;
+  m_signature = d2i_ECDSA_SIG(NULL, &sig_ptr_copy, sig_len);
+  free(sig_ptr);
 
   uint32_t dist = i.GetDistanceFrom (start);
   NS_ASSERT (dist == GetSerializedSize ());

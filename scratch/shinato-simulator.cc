@@ -401,7 +401,7 @@ private:
 VanetRoutingExperiment::VanetRoutingExperiment ()//コンストラクターパラメータの初期化
 : m_port (9),//ポート番号
 m_nNodes (40),//ノード数
-m_protocolName ("NGPSR"),//プロトコル名
+m_protocolName ("PGPSR"),//プロトコル名
 m_txp (17.026),//送信電力(dB)
 m_EDT (-96),
 m_lossModelName ("ns3::LogDistancePropagationLossModel"),//電波伝搬損失モデルの名前
