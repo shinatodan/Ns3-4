@@ -43,6 +43,9 @@ class RoutingProtocol : public Ipv4RoutingProtocol
 {
   EC_KEY* ec_key;
   ECDSA_SIG* m_dsaSignatureIP;
+  EC_KEY* ec_keypos;
+  ECDSA_SIG* m_dsaSignaturePOS;
+  std::string m_tracefile;
 public:
   static TypeId GetTypeId (void);
   static const uint32_t PGPSR_PORT;
@@ -87,6 +90,28 @@ public:
   ECDSA_SIG* GetDsaSignatureIP() const
   {
       return m_dsaSignatureIP;
+  }
+  void SetDsaParameterPOS(EC_KEY* posparameter)
+  {
+    ec_keypos = posparameter;
+  }
+  EC_KEY* GetDsaParameterPOS() const
+  {
+    return ec_keypos;
+  }
+  void SetDsaSignaturePOS(ECDSA_SIG* possignature)
+  {
+    m_dsaSignaturePOS = possignature;
+  }
+  ECDSA_SIG* GetDsaSignaturePOS() const
+  {
+    return m_dsaSignaturePOS;
+  }
+  void Settracefile(std::string tracefile) {
+    m_tracefile = tracefile;
+  }
+  std::string Gettracefile() const {
+    return m_tracefile;
   }
 
   Ptr<Ipv4> m_ipv4;

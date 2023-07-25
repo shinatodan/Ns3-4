@@ -198,8 +198,17 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   {
     std::cerr << "Failed to create EC key" << std::endl;
   }
-
   if (EC_KEY_generate_key(ecKey_ip) != 1)//公開鍵、秘密鍵ペア生成
+  {
+    std::cerr << "Failed to generate EC key pair" << std::endl;
+  }
+  //鍵生成（位置)
+  EC_KEY* ecKey_pos = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
+  if (ecKey_pos == nullptr)
+  {
+    std::cerr << "Failed to create EC key" << std::endl;
+  }
+  if (EC_KEY_generate_key(ecKey_pos) != 1)//公開鍵、秘密鍵ペア生成
   {
     std::cerr << "Failed to generate EC key pair" << std::endl;
   }
@@ -231,7 +240,8 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   else if(m_protocolName=="PGPSR"){
 
     pgpsr.SetDsaParameterIP(ecKey_ip);//IPアドレス署名用のパラメーター
-    //pgpsr.Settracefile(m_traceFile);
+    pgpsr.SetDsaParameterPOS(ecKey_pos);
+    pgpsr.Settracefile(m_traceFile);
 
     //署名生成（IP)
     unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
@@ -242,6 +252,15 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
       std::cerr << "Failed to generate ECDSA signature" << std::endl;
     }
     pgpsr.SetDsaSignatureIP(signature);
+    //署名生成（位置)
+    unsigned char digest1[SHA256_DIGEST_LENGTH];//ハッシュ値計算
+    SHA256(reinterpret_cast<const unsigned char*>(m_traceFile.c_str()), m_traceFile.length(), digest1);
+    ECDSA_SIG* possignature = ECDSA_do_sign(digest1, SHA256_DIGEST_LENGTH, ecKey_pos);//署名生成
+    if (possignature == nullptr)
+    {
+      std::cerr << "Failed to generate ECDSA signature" << std::endl;
+    }
+    pgpsr.SetDsaSignaturePOS(possignature);
 
     list.Add (pgpsr, 100);
     internet.SetRoutingHelper (list);
@@ -380,11 +399,6 @@ private:
     Ptr<FlowMonitor>   m_flowMonitor;
     Ptr<WifiPhyStats> m_wifiPhyStats;
     Ptr<RoutingHelper> m_routingHelper;
-
-    /*DSA* dsa_pos;
-    unsigned char* m_signature[128];
-    unsigned int m_sgnatureLength;*/
-
 
     //出力値
     double m_pdr;

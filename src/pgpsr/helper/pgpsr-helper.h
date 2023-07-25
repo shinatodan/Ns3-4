@@ -70,6 +70,14 @@ public:
   EC_KEY* GetDsaParameterIP() const;
   void SetDsaSignatureIP(ECDSA_SIG* signature);
   ECDSA_SIG* GetDsaSignatureIP() const;
+  //位置
+  void SetDsaParameterPOS(EC_KEY* posparamater);
+  EC_KEY* GetDsaParameterPOS() const;
+  void SetDsaSignaturePOS(ECDSA_SIG* possignature);
+  ECDSA_SIG* GetDsaSignaturePOS() const;
+
+  void Settracefile(std::string tracefile);
+  std::string Gettracefile() const;
 
   void Install (void) const;
 
@@ -77,6 +85,9 @@ private:
   ObjectFactory m_agentFactory;
   EC_KEY* m_dsaParameter;
   ECDSA_SIG* m_dsaSignatureIP;
+  EC_KEY* m_dsaposParameter;
+  ECDSA_SIG* m_dsaposSignatureIP;
+  std::string m_tracefile;
 };
 
 }

@@ -110,10 +110,11 @@ operator<< (std::ostream & os, TypeHeader const & h)
 //-----------------------------------------------------------------------------
 // HELLO
 //-----------------------------------------------------------------------------
-HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy, ECDSA_SIG* signature)
+HelloHeader::HelloHeader (uint64_t originPosx, uint64_t originPosy, ECDSA_SIG* signature, ECDSA_SIG* possignature)
   : m_originPosx (originPosx),
     m_originPosy (originPosy),
-    m_signature (signature)
+    m_signature (signature),
+    m_possignature (possignature)
 {
 }
 
@@ -144,7 +145,12 @@ HelloHeader::GetSerializedSize () const
   uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
   OPENSSL_free(sig_ptr);
 
-  return 16 + 4 + sig_len;
+  unsigned char *sig_ptrpos = NULL;
+  int sig_len_temppos = i2d_ECDSA_SIG(m_possignature, &sig_ptrpos);
+  uint32_t sig_lenpos = static_cast<uint32_t>(sig_len_temppos);
+  OPENSSL_free(sig_ptrpos);
+
+  return 16 + 4 + sig_len + 4 + sig_lenpos;
   //return 16;
 }
 
@@ -160,9 +166,7 @@ HelloHeader::Serialize (Buffer::Iterator i) const
   //追加
   unsigned char *sig_ptr = NULL;
   int sig_len_temp = i2d_ECDSA_SIG(m_signature, &sig_ptr);
-
   uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
-
   // Write signature length and signature
   i.WriteHtonU32 (sig_len);
   for(uint32_t k = 0; k < sig_len; k++)
@@ -170,6 +174,17 @@ HelloHeader::Serialize (Buffer::Iterator i) const
       i.WriteU8 (static_cast<uint8_t>(sig_ptr[k]));
   }
   OPENSSL_free(sig_ptr);
+
+  unsigned char *sig_ptrpos = NULL;
+  int sig_len_temppos = i2d_ECDSA_SIG(m_possignature, &sig_ptrpos);
+  uint32_t sig_lenpos = static_cast<uint32_t>(sig_len_temppos);
+  // Write signature length and signature
+  i.WriteHtonU32 (sig_lenpos);
+  for(uint32_t k = 0; k < sig_lenpos; k++)
+  {
+      i.WriteU8 (static_cast<uint8_t>(sig_ptrpos[k]));
+  }
+  OPENSSL_free(sig_ptrpos);
 
 }
 
@@ -196,6 +211,18 @@ HelloHeader::Deserialize (Buffer::Iterator start)
   const unsigned char *sig_ptr_copy = sig_ptr;
   m_signature = d2i_ECDSA_SIG(NULL, &sig_ptr_copy, sig_len);
   free(sig_ptr);
+
+  // Read signature length
+  uint32_t sig_lenpos = i.ReadNtohU32 ();
+  // Read signature
+  unsigned char *sig_ptrpos = (unsigned char*) malloc(sig_lenpos);
+  for(uint32_t k = 0; k < sig_lenpos; k++)
+  {
+      sig_ptrpos[k] = static_cast<unsigned char>(i.ReadU8 ());
+  }
+  const unsigned char *sig_ptr_copypos = sig_ptrpos;
+  m_possignature = d2i_ECDSA_SIG(NULL, &sig_ptr_copypos, sig_lenpos);
+  free(sig_ptrpos);
 
   uint32_t dist = i.GetDistanceFrom (start);
   NS_ASSERT (dist == GetSerializedSize ());

@@ -53,6 +53,9 @@ PGpsrHelper::Create (Ptr<Node> node) const
   //shinato
   pgpsr->SetDsaParameterIP(m_dsaParameter); // m_dsaParameterの設定
   pgpsr->SetDsaSignatureIP(m_dsaSignatureIP);
+  pgpsr->SetDsaParameterPOS(m_dsaposParameter); // m_dsaParameterの設定
+  pgpsr->SetDsaSignaturePOS(m_dsaposSignatureIP);
+  pgpsr->Settracefile(m_tracefile);
   return pgpsr;
 }
 
@@ -62,7 +65,6 @@ PGpsrHelper::Set (std::string name, const AttributeValue &value)
   m_agentFactory.Set (name, value);
 }
 
-//shinato
 //shinato
 void PGpsrHelper::SetDsaParameterIP(EC_KEY* parameter) {
     m_dsaParameter = parameter;
@@ -76,6 +78,26 @@ void PGpsrHelper::SetDsaSignatureIP(ECDSA_SIG* signature)
 }
 ECDSA_SIG* PGpsrHelper::GetDsaSignatureIP() const{
     return m_dsaSignatureIP;
+}
+void PGpsrHelper::SetDsaParameterPOS(EC_KEY* posparameter) {
+    m_dsaposParameter = posparameter;
+}
+EC_KEY* PGpsrHelper::GetDsaParameterPOS() const {
+  return m_dsaposParameter;
+}
+void PGpsrHelper::SetDsaSignaturePOS(ECDSA_SIG* possignature)
+{
+    m_dsaposSignatureIP = possignature;
+}
+ECDSA_SIG* PGpsrHelper::GetDsaSignaturePOS() const
+{
+    return m_dsaposSignatureIP;
+}
+void PGpsrHelper::Settracefile(std::string tracefile) {
+    m_tracefile = tracefile;
+}
+std::string PGpsrHelper::Gettracefile() const {
+  return m_tracefile;
 }
 
 

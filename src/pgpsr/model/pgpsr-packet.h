@@ -68,7 +68,7 @@ class HelloHeader : public Header
 {
 public:
   /// c-tor
-  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0, ECDSA_SIG* signature = nullptr);
+  HelloHeader (uint64_t originPosx = 0, uint64_t originPosy = 0, ECDSA_SIG* signature = nullptr, ECDSA_SIG* possignature = nullptr);
 
   ///\name Header serialization/deserialization
   //\{
@@ -99,12 +99,20 @@ public:
     return m_originPosy;
   }
   //shinato
-  void SetSignature (ECDSA_SIG* signature){
+  void SetSignature (ECDSA_SIG* signature)
+  {
     m_signature = signature;
   }
   ECDSA_SIG* GetSignature() const
   {
     return m_signature;
+  }
+  void  SetSignaturePOS (ECDSA_SIG* possignature)
+  {
+    m_possignature = possignature;
+  }
+  ECDSA_SIG* GetSignaturePOS() const{
+    return m_possignature;
   }
 
 
@@ -117,6 +125,7 @@ private:
   uint64_t         m_originPosx;          ///< Originator Position x
   uint64_t         m_originPosy;          ///< Originator Position x
   ECDSA_SIG* m_signature;
+  ECDSA_SIG* m_possignature;
 };
 
 std::ostream & operator<< (std::ostream & os, HelloHeader const &);

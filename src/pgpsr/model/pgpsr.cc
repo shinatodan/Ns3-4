@@ -711,16 +711,29 @@ RoutingProtocol::RecvPGPSR (Ptr<Socket> socket)
         
         //ECキー生成
         std::string protocolName = "PGPSR";
+        std::string traceFile = Gettracefile();
         EC_KEY* ecKey = GetDsaParameterIP();
+        EC_KEY* ecKeypos = GetDsaParameterPOS();
+
         //ハッシュ値
         unsigned char digest[SHA256_DIGEST_LENGTH];//ハッシュ値計算
         SHA256(reinterpret_cast<const unsigned char*>(protocolName.c_str()), protocolName.length(), digest);
+        unsigned char digest1[SHA256_DIGEST_LENGTH];//ハッシュ値計算
+        SHA256(reinterpret_cast<const unsigned char*>(traceFile.c_str()), traceFile.length(), digest1);
+
         //署名検証
         if (ECDSA_do_verify(digest, SHA256_DIGEST_LENGTH, hdr.GetSignature(), ecKey) == 1)//署名検証　成功時１
         {
                 //std::cerr << "ECDSA signature verification succeeded" << std::endl;
-                //近隣ノードの情報更新
-                UpdateRouteToNeighbor (sender, receiver, Position);
+                if (ECDSA_do_verify(digest1, SHA256_DIGEST_LENGTH, hdr.GetSignaturePOS(), ecKeypos) == 1)
+                {
+                        //近隣ノードの情報更新
+                        UpdateRouteToNeighbor (sender, receiver, Position);
+                }
+                else{
+                        std::cerr << "ECDSA signature verification failed" << std::endl;
+                }
+                
         }
         else
         {
@@ -933,14 +946,13 @@ RoutingProtocol::SendHello ()
         //ECDSA
         //署名生成
         ECDSA_SIG* signature = GetDsaSignatureIP();
-        
-
+        ECDSA_SIG* possignature = GetDsaSignaturePOS();
         
 	for (std::map<Ptr<Socket>, Ipv4InterfaceAddress>::const_iterator j = m_socketAddresses.begin (); j != m_socketAddresses.end (); ++j)
 	{
 		Ptr<Socket> socket = j->first;
 		Ipv4InterfaceAddress iface = j->second;
-		HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), signature);
+		HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), signature, possignature);
 
 		Ptr<Packet> packet = Create<Packet> ();
 		packet->AddHeader (helloHeader);
