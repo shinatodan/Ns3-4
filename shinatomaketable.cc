@@ -35,10 +35,11 @@ int makeFile(int t){
 	
 	char GPSR_0[128];
 	char NGPSR_0[128];
+	char PGPSR_0[128];
 	
     
 	
-	double GPSR[t],NGPSR[t];
+	double GPSR[t],NGPSR[t],PGPSR[t];
 	std::string value = "NULL";	
 	
 	for(int i=1;i<=6;i++){
@@ -47,14 +48,19 @@ int makeFile(int t){
 			
 			std::string Gstr = "/home/hry-user/Simulation/GPSR/data" +std::to_string(l)+ ".txt";
 			std::string Istr = "/home/hry-user/Simulation/NGPSR/data" +std::to_string(l)+ ".txt";
+			std::string Hstr = "/home/hry-user/Simulation/PGPSR/data" +std::to_string(l)+ ".txt";
+
 			
 			
 			ReturnStrings( Gstr.c_str(), i, GPSR_0, 128 );
 			ReturnStrings( Istr.c_str(), i, NGPSR_0, 128 );
+			ReturnStrings( Hstr.c_str(), i, PGPSR_0, 128 );
+
 			
 		
 			GPSR[l] = atof(GPSR_0);
 			NGPSR[l] = atof(NGPSR_0);
+			PGPSR[l] = atof(PGPSR_0);
 		
 		switch(i){		
 		case 1:
@@ -80,10 +86,10 @@ int makeFile(int t){
 		}
 		fstream fs;
 		fs.open("/home/hry-user/Simulation/"+value+".txt", ios::out);
-		fs << value<<","<<"GPSR"<<","<<"NGPSR"<<endl;
+		fs << value<<","<<"GPSR"<<","<<"NGPSR"<<","<<"PGPSR"<<endl;
 		
 		for(int r=1; r<=t; r++){
-			fs <<std::to_string(r)<<"回目"<<","<<std::to_string(GPSR[r])<<","<<std::to_string(NGPSR[r])<<endl;
+			fs <<std::to_string(r)<<"回目"<<","<<std::to_string(GPSR[r])<<","<<std::to_string(NGPSR[r])<<","<<std::to_string(PGPSR[r])<<endl;
 			//printf("%f\n",LGPSR[l]);
 		}
 		fs.close();	

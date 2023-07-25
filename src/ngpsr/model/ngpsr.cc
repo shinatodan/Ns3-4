@@ -767,17 +767,17 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 {
 	uint32_t flag = 0;
 	
-	if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
+	/*if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
 	{
-		flag = 1;
+		flag = 0;
 	}
 	else if(sender==("192.168.1.29"))
 	{
-		flag = 2;
+		flag = 0;
 	}	
 	else{
 		flag = 0;
-	}
+	}*/
 	m_neighbors.AddEntry (sender, Pos, flag);
 }
 
@@ -962,7 +962,7 @@ RoutingProtocol::SendHello ()
         uint64_t nodeId = m_ipv4->GetObject<Node> ()->GetId ();//ノードID取得
         std::string nodeid = std::to_string(nodeId);//ノードIDを文字列に変換
 
-        std::string IPliar = "not NGPSR";
+        /*std::string IPliar = "not NGPSR";
         //IDのハッシュ値計算
         unsigned char digest_IPliar[SHA256_DIGEST_LENGTH];//SHA256_DIGEST_LENGTHはSHA-256ハッシュのバイト長を表す定数
         SHA256(reinterpret_cast<const unsigned char*>(IPliar.c_str()), IPliar.length(), digest_IPliar);//与えられたデータ（メッセージ）のハッシュ値を計算
@@ -986,7 +986,7 @@ RoutingProtocol::SendHello ()
         {
                 std::cerr << "Failed to generate DSA signature" << std::endl;
                 handleErrors();
-        }
+        }*/
 
       
         // 署名と長さを取得する
@@ -1005,7 +1005,7 @@ RoutingProtocol::SendHello ()
                 //shinato
                 //helloヘッダーにDSA署名を追加
 
-                if(nodeId == 20 || nodeId == 25){
+                /*if(nodeId == 20 || nodeId == 25){
                         HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), nodeId, signature_IPliar, signatureLength_IPliar, possignature, possignatureLength);
                         Ptr<Packet> packet = Create<Packet> ();
 		        packet->AddHeader (helloHeader);
@@ -1045,7 +1045,7 @@ RoutingProtocol::SendHello ()
                         }
                         socket->SendTo (packet, 0, InetSocketAddress (destination, NGPSR_PORT));
                 }
-                else{
+                else{*/
                         HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), nodeId, signature, signatureLength, possignature, possignatureLength);
                         Ptr<Packet> packet = Create<Packet> ();
 		        packet->AddHeader (helloHeader);
@@ -1064,7 +1064,7 @@ RoutingProtocol::SendHello ()
                                 NS_LOG_DEBUG("Send hello to destination"<<destination );
                         }
                         socket->SendTo (packet, 0, InetSocketAddress (destination, NGPSR_PORT));
-	        }
+	        //}
         }
 		
 }
@@ -1207,7 +1207,7 @@ RoutingProtocol::Forwarding (Ptr<const Packet> packet, const Ipv4Header & header
 {
         //shinato 転送しない悪意ノード
 	int not_foward = m_ipv4->GetObject<Node> ()->GetId ();
-        if(not_foward == 20||not_foward ==25)
+        if(not_foward == 200||not_foward ==250)
 	{	
 		return true;
 	}

@@ -6,14 +6,14 @@ rm -rf ~/dataTemp
 rm -rf ~/Simulation/* #dataファイルの下を削除する
 mkdir ~/"Simulation/GPSR"
 mkdir ~/"Simulation/NGPSR"
-
+mkdir ~/"Simulation/PGPSR"
 
 start_time=`date +%s` 
 
 i=1 #loop
 r=1000 #実験回数
 
-for protocol in GPSR NGPSR
+for protocol in GPSR NGPSR PGPSR
 do
 
 	mkdir -p ~/"dataTemp"
