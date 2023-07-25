@@ -139,7 +139,7 @@ HelloHeader::GetInstanceTypeId () const
 uint32_t
 HelloHeader::GetSerializedSize () const
 {
-  //追加
+  /*//追加
   unsigned char *sig_ptr = NULL;
   int sig_len_temp = i2d_ECDSA_SIG(m_signature, &sig_ptr);
   uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
@@ -148,9 +148,10 @@ HelloHeader::GetSerializedSize () const
   unsigned char *sig_ptrpos = NULL;
   int sig_len_temppos = i2d_ECDSA_SIG(m_possignature, &sig_ptrpos);
   uint32_t sig_lenpos = static_cast<uint32_t>(sig_len_temppos);
-  OPENSSL_free(sig_ptrpos);
+  OPENSSL_free(sig_ptrpos);*/
 
-  return 16 + 4 + sig_len + 4 + sig_lenpos;
+  //return 16 + 4 + sig_len + 4 + sig_lenpos;
+  return 16 + (2*64);
   //return 16;
 }
 
@@ -163,7 +164,7 @@ HelloHeader::Serialize (Buffer::Iterator i) const
   i.WriteHtonU64 (m_originPosx);
   i.WriteHtonU64 (m_originPosy);
 
-  //追加
+  /*//追加
   unsigned char *sig_ptr = NULL;
   int sig_len_temp = i2d_ECDSA_SIG(m_signature, &sig_ptr);
   uint32_t sig_len = static_cast<uint32_t>(sig_len_temp);
@@ -184,7 +185,25 @@ HelloHeader::Serialize (Buffer::Iterator i) const
   {
       i.WriteU8 (static_cast<uint8_t>(sig_ptrpos[k]));
   }
-  OPENSSL_free(sig_ptrpos);
+  OPENSSL_free(sig_ptrpos);*/
+
+  const BIGNUM *r, *s;
+
+  // Write first signature
+  ECDSA_SIG_get0(m_signature, &r, &s);
+  unsigned char r_bin[32];
+  unsigned char s_bin[32];
+  BN_bn2bin(r, r_bin);
+  BN_bn2bin(s, s_bin);
+  i.Write(r_bin, 32);
+  i.Write(s_bin, 32);
+
+  // Write second signature
+  ECDSA_SIG_get0(m_possignature, &r, &s);
+  BN_bn2bin(r, r_bin);
+  BN_bn2bin(s, s_bin);
+  i.Write(r_bin, 32);
+  i.Write(s_bin, 32);
 
 }
 
@@ -199,7 +218,7 @@ HelloHeader::Deserialize (Buffer::Iterator start)
 
   NS_LOG_DEBUG ("Deserialize X " << m_originPosx << " Y " << m_originPosy);
 
-  //追加
+  /*//追加
   // Read signature length
   uint32_t sig_len = i.ReadNtohU32 ();
   // Read signature
@@ -222,7 +241,21 @@ HelloHeader::Deserialize (Buffer::Iterator start)
   }
   const unsigned char *sig_ptr_copypos = sig_ptrpos;
   m_possignature = d2i_ECDSA_SIG(NULL, &sig_ptr_copypos, sig_lenpos);
-  free(sig_ptrpos);
+  free(sig_ptrpos);*/
+
+  // Read first signature
+  unsigned char r_bin[32];
+  unsigned char s_bin[32];
+  i.Read(r_bin, 32);
+  i.Read(s_bin, 32);
+  m_signature = ECDSA_SIG_new();
+  ECDSA_SIG_set0(m_signature, BN_bin2bn(r_bin, 32, NULL), BN_bin2bn(s_bin, 32, NULL));
+
+  // Read second signature
+  i.Read(r_bin, 32);
+  i.Read(s_bin, 32);
+  m_possignature = ECDSA_SIG_new();
+  ECDSA_SIG_set0(m_possignature, BN_bin2bn(r_bin, 32, NULL), BN_bin2bn(s_bin, 32, NULL));
 
   uint32_t dist = i.GetDistanceFrom (start);
   NS_ASSERT (dist == GetSerializedSize ());

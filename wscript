@@ -835,7 +835,7 @@ def build(bld):
 
     #shinato
     env.append_value('CXXFLAGS', ['-I/usr/include/openssl'])
-    env.append_value('LIBPATH', ['/usr/lib'])
+    env.append_value('LIBPATH', ['/home/hry-user/openssl-1.1.1t/'])
     env.append_value('LIB', ['ssl', 'crypto'])
 
     if Options.options.check_config:
