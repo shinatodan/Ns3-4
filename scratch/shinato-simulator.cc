@@ -24,6 +24,7 @@
 #include "ns3/ns2-mobility-helper.h"
 #include <string>
 #include <iomanip>
+#include <chrono>
 #include <openssl/dsa.h>
 #include <openssl/err.h>
 #include <openssl/sha.h>
@@ -167,51 +168,6 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
   Ipv4ListRoutingHelper list;
   InternetStackHelper internet;
 
-  //DSA
-  //鍵生成（IP)
-  DSA* dsa_ip = DSA_new();
-  if (dsa_ip == nullptr) {
-      std::cerr << "Failed to create DSA key" << std::endl;
-  }
-  if (DSA_generate_parameters_ex(dsa_ip, 2048, nullptr, 0, nullptr, nullptr, nullptr) != 1) {
-      std::cerr << "Failed to generate DSA parameters" << std::endl;
-  }
-  if (DSA_generate_key(dsa_ip) != 1) {
-      std::cerr << "Failed to generate DSA key pair" << std::endl;
-  }
-  //鍵生成（位置)
-  DSA* dsa_pos = DSA_new();
-  if (dsa_pos == nullptr) {
-      std::cerr << "Failed to create DSA key" << std::endl;
-  }
-  if (DSA_generate_parameters_ex(dsa_pos, 2048, nullptr, 0, nullptr, nullptr, nullptr) != 1) {
-      std::cerr << "Failed to generate DSA parameters" << std::endl;
-  }
-  if (DSA_generate_key(dsa_pos) != 1) {
-      std::cerr << "Failed to generate DSA key pair" << std::endl;
-  }
-
-  //ECDSA
-  //鍵生成（IP)
-  EC_KEY* ecKey_ip = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
-  if (ecKey_ip == nullptr)
-  {
-    std::cerr << "Failed to create EC key" << std::endl;
-  }
-  if (EC_KEY_generate_key(ecKey_ip) != 1)//公開鍵、秘密鍵ペア生成
-  {
-    std::cerr << "Failed to generate EC key pair" << std::endl;
-  }
-  //鍵生成（位置)
-  EC_KEY* ecKey_pos = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
-  if (ecKey_pos == nullptr)
-  {
-    std::cerr << "Failed to create EC key" << std::endl;
-  }
-  if (EC_KEY_generate_key(ecKey_pos) != 1)//公開鍵、秘密鍵ペア生成
-  {
-    std::cerr << "Failed to generate EC key pair" << std::endl;
-  }
 
   if(m_protocolName=="AODV"){
     list.Add (aodv, 100);//aodvルーティングヘルパーとその優先度(100)を格納する
@@ -238,6 +194,27 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
     internet.Install(c);
   }
   else if(m_protocolName=="PGPSR"){
+    //ECDSA
+    //鍵生成（IP)
+    EC_KEY* ecKey_ip = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
+    if (ecKey_ip == nullptr)
+    {
+      std::cerr << "Failed to create EC key" << std::endl;
+    }
+    if (EC_KEY_generate_key(ecKey_ip) != 1)//公開鍵、秘密鍵ペア生成
+    {
+      std::cerr << "Failed to generate EC key pair" << std::endl;
+    }
+    //鍵生成（位置)
+    EC_KEY* ecKey_pos = EC_KEY_new_by_curve_name(NID_secp256k1);//ECキー生成
+    if (ecKey_pos == nullptr)
+    {
+      std::cerr << "Failed to create EC key" << std::endl;
+    }
+    if (EC_KEY_generate_key(ecKey_pos) != 1)//公開鍵、秘密鍵ペア生成
+    {
+      std::cerr << "Failed to generate EC key pair" << std::endl;
+    }
 
     pgpsr.SetDsaParameterIP(ecKey_ip);//IPアドレス署名用のパラメーター
     pgpsr.SetDsaParameterPOS(ecKey_pos);
@@ -268,6 +245,30 @@ RoutingHelper::ConfigureRoutingProtocol (NodeContainer& c)
 
   }
   else if(m_protocolName=="NGPSR"){//DSA署名付きのGPSR
+
+    //DSA
+    //鍵生成（IP)
+    DSA* dsa_ip = DSA_new();
+    if (dsa_ip == nullptr) {
+        std::cerr << "Failed to create DSA key" << std::endl;
+    }
+    if (DSA_generate_parameters_ex(dsa_ip, 2048, nullptr, 0, nullptr, nullptr, nullptr) != 1) {
+        std::cerr << "Failed to generate DSA parameters" << std::endl;
+    }
+    if (DSA_generate_key(dsa_ip) != 1) {
+        std::cerr << "Failed to generate DSA key pair" << std::endl;
+    }
+    //鍵生成（位置)
+    DSA* dsa_pos = DSA_new();
+    if (dsa_pos == nullptr) {
+        std::cerr << "Failed to create DSA key" << std::endl;
+    }
+    if (DSA_generate_parameters_ex(dsa_pos, 2048, nullptr, 0, nullptr, nullptr, nullptr) != 1) {
+        std::cerr << "Failed to generate DSA parameters" << std::endl;
+    }
+    if (DSA_generate_key(dsa_pos) != 1) {
+        std::cerr << "Failed to generate DSA key pair" << std::endl;
+    }
     
     ngpsr.SetDsaParameterIP(dsa_ip);//IPアドレス署名用のパラメーター
     ngpsr.SetDsaParameterPOS(dsa_pos);
@@ -367,12 +368,12 @@ public:
     virtual void ConfigureDevices ();//チャネルを構成する
     virtual void ConfigureMobility ();//モビリティを設定する
     virtual void ConfigureApplications ();//アプリケーションを設定する
+    size_t getMemoryUsage ();
     virtual void RunSimulation ();//シミュレーションを実行する
     void ConfigureDefaults ();//デフォルトの属性を設定する
     void RunFlowMonitor();
     static void CourseChange (std::ostream *os, std::string foo, Ptr<const MobilityModel> mobility);//トレースファイル読み込み
     virtual void ProcessOutputs ();//出力を処理する
-
 private:
 
     uint32_t m_port;//ポート
@@ -408,6 +409,8 @@ private:
     uint32_t overhead;
     double m_packetLoss;
     double m_numHops;
+    double m_simlationTime;
+    size_t memory_usage_kb;
     std::string m_traceFile;
   
 };
@@ -432,6 +435,8 @@ m_overHead (0),
 overhead (0),
 m_packetLoss (0),
 m_numHops(0),
+m_simlationTime(0),
+memory_usage_kb(0),
 m_traceFile("/home/hry-user/ns-allinone-3.26/ns-3.26/node/mobility.tcl")
 {
 	//送受信ノードを選択
@@ -481,7 +486,6 @@ VanetRoutingExperiment::ConfigureDefaults ()//デフォルトの属性を設定�
     Config::SetDefault ("ns3::OnOffApplication::PacketSize",StringValue (m_packetSize));
     Config::SetDefault ("ns3::OnOffApplication::DataRate",  StringValue (m_rate));
     Config::SetDefault ("ns3::WifiRemoteStationManager::NonUnicastMode",StringValue (m_phyMode));
-    //ユニキャスト以外の送信に使用されるwifiモードを変調方式ofdm,レート6Mbps,帯域幅10MHzとする
 }
 
 void
@@ -568,10 +572,28 @@ VanetRoutingExperiment::ConfigureApplications ()//アプリケーションを設
     m_routingHelper->Install(m_adhocTxNodes,m_adhocTxDevices,m_adhocTxInterfaces,m_totalSimTime,m_protocolName,m_traceFile);
 }
 
+size_t
+VanetRoutingExperiment::getMemoryUsage() {
+    std::ifstream file("/proc/self/status");
+    std::string line;
+
+    while (std::getline(file, line)) {
+        if (line.find("VmRSS") != std::string::npos) {
+            size_t memory_kb;
+            sscanf(line.c_str(), "VmRSS: %lu", &memory_kb);
+            return memory_kb;
+        }
+    }
+    return 0; // エラーの場合
+
+}
+
 void
 VanetRoutingExperiment::RunSimulation ()//シミュレーションを実行する
 {
     NS_LOG_INFO ("Run Simulation.");//メッセージ"Run Simulation"をログに記録する
+
+    auto start_time = std::chrono::high_resolution_clock::now();
 
     m_flowMonitorHelper = new FlowMonitorHelper;
     m_flowMonitor = m_flowMonitorHelper->InstallAll();
@@ -579,6 +601,15 @@ VanetRoutingExperiment::RunSimulation ()//シミュレーションを実行す�
     Simulator::Stop (Seconds (m_totalSimTime));//シミュレーションが停止するまでの時間をスケジュールする
     Simulator::Run ();//シミュレーションを実行する
     RunFlowMonitor();
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration = end_time - start_time;
+    m_simlationTime = duration.count();
+    memory_usage_kb = getMemoryUsage();
+
+    std::cout << "シミュレーション実行時間" << m_simlationTime << "s" << std::endl; // 結果の出力
+    std::cout << "メモリ使用量: " << memory_usage_kb << " KB" << std::endl;
+
     Simulator::Destroy ();//シミュレーションの最後に呼び出す
 
 }
@@ -672,6 +703,8 @@ VanetRoutingExperiment::ProcessOutputs ()
     out<<m_delay<<std::endl;
     out<<m_packetLoss<<std::endl;
     out<<m_numHops<<std::endl;
+    out<<m_simlationTime<<std::endl;
+    out<<memory_usage_kb<<std::endl;
 
     out.close();
 }

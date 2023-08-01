@@ -42,7 +42,7 @@ int makeFile(int t){
 	double GPSR[t],NGPSR[t],PGPSR[t];
 	std::string value = "NULL";	
 	
-	for(int i=1;i<=6;i++){
+	for(int i=1;i<=8;i++){
 		for(int l=1;l<=t;l++){
 			
 			
@@ -81,6 +81,12 @@ int makeFile(int t){
 		case 6:
 		value="HopNum";	
 		break;
+		case 7:
+		value="SimTime";
+		break;
+		case 8:
+		value="Memory";
+		break;
 		default:
 		value="NULL";			
 		}
@@ -90,7 +96,6 @@ int makeFile(int t){
 		
 		for(int r=1; r<=t; r++){
 			fs <<std::to_string(r)<<"回目"<<","<<std::to_string(GPSR[r])<<","<<std::to_string(NGPSR[r])<<","<<std::to_string(PGPSR[r])<<endl;
-			//printf("%f\n",LGPSR[l]);
 		}
 		fs.close();	
 			

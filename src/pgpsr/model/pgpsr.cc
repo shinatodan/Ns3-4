@@ -750,7 +750,7 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 {
 	uint32_t flag = 0;
 	
-	if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
+	/*if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
 	{
 		flag = 0;
 	}
@@ -760,7 +760,7 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 	}
 	else{
 		flag = 0;
-	}
+	}*/
 	m_neighbors.AddEntry (sender, Pos, flag);
         
 }
@@ -932,6 +932,7 @@ RoutingProtocol::HelloTimerExpire ()
 //Hello Packetsの送信
 void
 RoutingProtocol::SendHello ()
+
 {
         NS_LOG_FUNCTION (this);
         double positionX;
