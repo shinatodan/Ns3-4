@@ -417,7 +417,7 @@ private:
 
 VanetRoutingExperiment::VanetRoutingExperiment ()//コンストラクターパラメータの初期化
 : m_port (9),//ポート番号
-m_nNodes (30),//ノード数
+m_nNodes (185),//ノード数
 m_protocolName ("PGPSR"),//プロトコル名
 m_txp (17.026),//送信電力(dB)
 m_EDT (-96),
@@ -437,7 +437,7 @@ m_packetLoss (0),
 m_numHops(0),
 m_simlationTime(0),
 memory_usage_kb(0),
-m_traceFile("/home/hry-user/ns-allinone-3.26/ns-3.26/node/mobility30.tcl")
+m_traceFile("/home/hry-user/ns-allinone-3.26/ns-3.26/node/mobility185.tcl")
 {
 	//送受信ノードを選択
     m_sourceNode=0;
