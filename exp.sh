@@ -11,9 +11,9 @@ mkdir ~/"Simulation/PGPSR"
 start_time=`date +%s` 
 
 i=1 #loop
-r=250 #実験回数
+r=1000 #実験回数
 
-for protocol in NGPSR PGPSR
+for protocol in PGPSR
 do
 
 	mkdir -p ~/"dataTemp"
