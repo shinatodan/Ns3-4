@@ -13,7 +13,7 @@ start_time=`date +%s`
 i=1 #loop
 r=250 #実験回数
 
-for protocol in GPSR NGPSR PGPSR
+for protocol in NGPSR PGPSR
 do
 
 	mkdir -p ~/"dataTemp"
@@ -24,12 +24,19 @@ do
 	
 	mv ~/dataTemp/data.txt ~/dataTemp/data$i.txt
 	mv ~/dataTemp/data$i.txt ~/Simulation/$protocol
+
+	send_line_notification1() {
+		message="$protocol シミュレーション $i 回目終了"
+		curl -X POST -H "Authorization: Bearer $TOKEN" -F "message=$message" $LINE_NOTIFY_API
+	}	
+	send_line_notification1
+
 	i=`expr $i + 1`
 	
 	done
 	
 	i=1
-	rm -rf ~/dataTemp	
+	rm -rf ~/dataTemp
 
 done
 
@@ -45,10 +52,10 @@ end_time=`date +%s` #unix時刻から現在の時刻までの秒数を取得
 
   echo "シュミレーション時間${HH}:${MM}:${SS}" #シミュレーションにかかった時間を　時:分:秒で表示する
 
-  send_line_notification() {
+  send_line_notification2() {
     message="シミュレーションが終了しました。"
     curl -X POST -H "Authorization: Bearer $TOKEN" -F "message=$message" $LINE_NOTIFY_API
 }
 
 # LINE通知を送信
-send_line_notification
+send_line_notification2

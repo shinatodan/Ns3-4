@@ -769,11 +769,11 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 	
 	/*if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
 	{
-		flag = 0;
+		flag = 1;
 	}
 	else if(sender==("192.168.1.29"))
 	{
-		flag = 0;
+		flag = 2;
 	}	
 	else{
 		flag = 0;
@@ -960,7 +960,7 @@ RoutingProtocol::SendHello ()
         //shinato
         //helloパケットに追加する数字
         uint64_t nodeId = m_ipv4->GetObject<Node> ()->GetId ();//ノードID取得
-        std::string nodeid = std::to_string(nodeId);//ノードIDを文字列に変換
+       
 
         /*std::string IPliar = "not NGPSR";
         //IDのハッシュ値計算

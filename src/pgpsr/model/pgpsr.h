@@ -166,10 +166,6 @@ private:
 
   void RecoveryMode(Ipv4Address dst, Ptr<Packet> p, UnicastForwardCallback ucb, Ipv4Header header);
   
-  //shinato
-  uint32_t nodeId = 0;
-  
-  
   uint32_t MaxQueueLen;                  ///<ルーティング プロトコルがバッファできるパケットの最大数
   Time MaxQueueTime;                     ///<ルーティング プロトコルがパケットをバッファできる最大時間
   RequestQueue m_queue;
