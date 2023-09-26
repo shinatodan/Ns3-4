@@ -750,7 +750,7 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 {
 	uint32_t flag = 0;
 	
-	if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
+	/*if(sender==("192.168.1.24"))//位置情報を変えるノード(192.168.1.nodeId+1)
 	{
 		flag = 1;
 	}
@@ -760,7 +760,7 @@ RoutingProtocol::UpdateRouteToNeighbor (Ipv4Address sender, Ipv4Address receiver
 	}
 	else{
 		flag = 0;
-	}
+	}*/
 	m_neighbors.AddEntry (sender, Pos, flag);
         
 }
@@ -943,7 +943,7 @@ RoutingProtocol::SendHello ()
         positionX = MM->GetPosition ().x;
         positionY = MM->GetPosition ().y;
 
-        uint64_t nodeId = m_ipv4->GetObject<Node> ()->GetId ();//ノードID取得
+        //uint64_t nodeId = m_ipv4->GetObject<Node> ()->GetId ();//ノードID取得
 
         //shinato
         //ECDSA
@@ -951,7 +951,7 @@ RoutingProtocol::SendHello ()
         ECDSA_SIG* signature = GetDsaSignatureIP();
         ECDSA_SIG* possignature = GetDsaSignaturePOS();
 
-        //IP詐称署名
+        /*//IP詐称署名
         std::string IPliar = "not NGPSR";
         unsigned char digest_IPliar[SHA256_DIGEST_LENGTH];//SHA256_DIGEST_LENGTHはSHA-256ハッシュのバイト長を表す定数
         SHA256(reinterpret_cast<const unsigned char*>(IPliar.c_str()), IPliar.length(), digest_IPliar);//与えられたデータ（メッセージ）のハッシュ値を計算
@@ -960,7 +960,7 @@ RoutingProtocol::SendHello ()
         std::string POSliar = "wrong pos";
         unsigned char digest_POSliar[SHA256_DIGEST_LENGTH];//SHA256_DIGEST_LENGTHはSHA-256ハッシュのバイト長を表す定数
         SHA256(reinterpret_cast<const unsigned char*>(POSliar.c_str()), POSliar.length(), digest_POSliar);//与えられたデータ（メッセージ）のハッシュ値を計
-        ECDSA_SIG* signature_POSliar = ECDSA_do_sign(digest_POSliar, SHA256_DIGEST_LENGTH, GetDsaParameterPOS());//署名生成
+        ECDSA_SIG* signature_POSliar = ECDSA_do_sign(digest_POSliar, SHA256_DIGEST_LENGTH, GetDsaParameterPOS());//署名生成*/
 
 
 	for (std::map<Ptr<Socket>, Ipv4InterfaceAddress>::const_iterator j = m_socketAddresses.begin (); j != m_socketAddresses.end (); ++j)
@@ -968,7 +968,7 @@ RoutingProtocol::SendHello ()
                 Ptr<Socket> socket = j->first;
                 Ipv4InterfaceAddress iface = j->second;
 
-                if(nodeId == 20 || nodeId == 25){
+                /*if(nodeId == 20 || nodeId == 25){
                         HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), signature_IPliar, possignature);
                         Ptr<Packet> packet = Create<Packet> ();
 		        packet->AddHeader (helloHeader);
@@ -1008,7 +1008,7 @@ RoutingProtocol::SendHello ()
                         }
                         socket->SendTo (packet, 0, InetSocketAddress (destination, PGPSR_PORT));
                 }
-                else{
+                else{*/
                         HelloHeader helloHeader (((uint64_t) positionX),((uint64_t) positionY), signature, possignature);
 
                         Ptr<Packet> packet = Create<Packet> ();
@@ -1028,7 +1028,7 @@ RoutingProtocol::SendHello ()
                                 NS_LOG_DEBUG("Send hello to destination"<<destination );
                         }
                         socket->SendTo (packet, 0, InetSocketAddress (destination, PGPSR_PORT));
-                }
+                //}
         }
 
 		
@@ -1172,7 +1172,7 @@ RoutingProtocol::Forwarding (Ptr<const Packet> packet, const Ipv4Header & header
 {
         //shinato 転送しない悪意ノード
 	int not_foward = m_ipv4->GetObject<Node> ()->GetId ();
-        if(not_foward == 20||not_foward ==25)
+        if(not_foward == 200||not_foward ==250)
 	{	
 		return true;
 	}
